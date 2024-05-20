@@ -6,6 +6,13 @@ export default function FormListBarangTotalCreate({ data, setData, errors }) {
     const [maxDiskon, setMaxDiskon] = useState(0);
     const [maxOngkir, setMaxOngkir] = useState(0);
 
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        }).format(value);
+    };
+
     const handleChange = (e) => {
         const { name, value, max } = e.target;
 
@@ -44,10 +51,14 @@ export default function FormListBarangTotalCreate({ data, setData, errors }) {
                         <input
                             type="text"
                             placeholder="Subtotal"
-                            className="input input-bordered input-sm bg-gray-200 w-full max-w-44"
+                            className="input input-bordered input-sm bg-gray-200 w-full max-w-44 text-right"
                             defaultValue={data.subtotal}
                             readOnly
+                            hidden
                         />
+                        <div className="input input-bordered input-sm bg-gray-200 w-full max-w-44 text-right">
+                            {formatCurrency(data.subtotal)}
+                        </div>
                     </label>
                 </div>
 
@@ -70,7 +81,7 @@ export default function FormListBarangTotalCreate({ data, setData, errors }) {
                             min={0}
                             max={maxDiskon}
                             placeholder="Diskon (Rp)"
-                            className="input input-bordered input-sm w-full max-w-44"
+                            className="input input-bordered input-sm w-full max-w-44 text-right"
                             name="diskon"
                             value={data.diskon}
                             onChange={handleChange}
@@ -97,7 +108,7 @@ export default function FormListBarangTotalCreate({ data, setData, errors }) {
                             min={0}
                             max={maxOngkir}
                             placeholder="Ongkos kirim"
-                            className="input input-bordered input-sm w-full max-w-44"
+                            className="input input-bordered input-sm w-full max-w-44 text-right"
                             name="ongkir"
                             value={data.ongkir}
                             onChange={handleChange}
@@ -124,10 +135,14 @@ export default function FormListBarangTotalCreate({ data, setData, errors }) {
                         <input
                             type="text"
                             placeholder="Total Bayar"
-                            className="input input-bordered input-sm bg-gray-200 w-full max-w-44"
-                            defaultValue={data.totalBayar}
+                            className="input input-bordered input-sm bg-gray-200 w-full max-w-44 text-right"
+                            defaultValue={formatCurrency(data.totalBayar)}
                             readOnly
+                            hidden
                         />
+                        <div className="input input-bordered input-sm bg-gray-200 w-full max-w-44 text-right">
+                            {formatCurrency(data.totalBayar)}
+                        </div>
                     </label>
                 </div>
 

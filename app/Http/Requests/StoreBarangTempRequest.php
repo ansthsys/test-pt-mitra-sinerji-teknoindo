@@ -25,7 +25,7 @@ class StoreBarangTempRequest extends FormRequest
 
             'idBarang' => ['required', 'integer'],
             'jumlah' => ['required', 'numeric', 'min:1', 'max:50'],
-            'diskon' => ['nullable', 'numeric', 'min:1', 'max:99'],
+            'diskon' => ['nullable', 'numeric', 'min:0', 'max:99'],
         ];
     }
 
@@ -42,7 +42,7 @@ class StoreBarangTempRequest extends FormRequest
             'jumlah.numeric' => 'Jumlah harus berupa angka',
             'jumlah.min' => 'Jumlah kurang dari 1 pcs',
             'jumlah.max' => 'Maksimal jumlah 50 pcs',
-            'diskon.min' => 'Diskon tidak boleh kurang dari 1%',
+            'diskon.min' => 'Diskon tidak boleh kurang dari 0%',
             'diskon.max' => 'Diskon maksimal 99%',
         ];
     }

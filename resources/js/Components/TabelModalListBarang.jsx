@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
 
-export default function TabelModalListBarang({ items, data, setData }) {
+export default function TabelModalListBarang({
+    items,
+    data,
+    setData,
+    modalMode,
+    selectedItem,
+}) {
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        }).format(value);
+    };
+
     const handleChange = (row) => {
         setData({
             ...data,
             idBarang: row.id,
             kode: row.kode,
             nama: row.nama,
+            harga: row.harga,
         });
     };
 
@@ -18,18 +32,24 @@ export default function TabelModalListBarang({ items, data, setData }) {
                 <table className="table table-sm table-pin-rows">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>No</th>
-                            <th>Kode</th>
-                            <th>Nama</th>
-                            <th>Harga</th>
+                            <th className="text-center"></th>
+                            <th className="text-center">No</th>
+                            <th className="text-center">Kode</th>
+                            <th className="text-center">Nama</th>
+                            <th className="text-center">Harga</th>
                         </tr>
                     </thead>
                     <tbody>
                         {items.length > 0 ? (
                             items?.map((item, index) => {
                                 return (
-                                    <tr className="hover" key={index}>
+                                    <tr
+                                        className={`hover ${
+                                            selectedItem?.idBarang ===
+                                                item.id && "bg-base-200"
+                                        }`}
+                                        key={index}
+                                    >
                                         <td>
                                             <input
                                                 type="radio"
@@ -39,12 +59,17 @@ export default function TabelModalListBarang({ items, data, setData }) {
                                                 onChange={() =>
                                                     handleChange(item)
                                                 }
+                                                disabled={modalMode !== "Buat"}
                                             />
                                         </td>
                                         <td>{index + 1}</td>
-                                        <td>{item.kode}</td>
+                                        <td className="text-center">
+                                            {item.kode}
+                                        </td>
                                         <td>{item.nama}</td>
-                                        <td>{item.harga}</td>
+                                        <td className="text-right">
+                                            {formatCurrency(item.harga)}
+                                        </td>
                                     </tr>
                                 );
                             })

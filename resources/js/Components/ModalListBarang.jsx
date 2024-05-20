@@ -4,20 +4,61 @@ import TabelModalListBarang from "./TabelModalListBarang";
 import InputRequired from "./InputRequired";
 import LabelErrorInput from "./LabelErrorInput";
 
-export default function ModalListBarang({ items, modalRef, modalMode }) {
-    const { data, setData, post, processing, errors, transform, reset } =
-        useForm({
-            idBarang: "",
-            kode: "",
-            nama: "",
-            jumlah: "",
-            diskon: "",
-        });
+export default function ModalListBarang({
+    items,
+    modalRef,
+    modalMode,
+    selectedItem,
+    setSelectedItem,
+}) {
+    const { data, setData, post, patch, processing, errors, reset } = useForm({
+        id: "",
+        idBarang: "",
+        kode: "",
+        nama: "",
+        harga: "",
+        jumlah: "",
+        diskon: "",
+    });
+
+    const formatCurrency = (value) => {
+        // if (!value) {
+        //     return "0";
+        // }
+
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        }).format(value);
+    };
+
+    const checkMode = (selectedItem) => {
+        const createData = (prev) => {
+            console.log(prev, selectedItem);
+
+            if (modalMode === "Ubah" && selectedItem) {
+                return {
+                    id: selectedItem.id ?? "",
+                    idBarang: selectedItem.idBarang ?? "",
+                    kode: selectedItem.kodeBarang,
+                    nama: selectedItem.namaBarang,
+                    harga: selectedItem.harga,
+                    jumlah: selectedItem.jumlah,
+                    diskon: selectedItem.diskonPct,
+                };
+            } else {
+                return prev;
+            }
+        };
+
+        setData((prev) => createData(prev));
+    };
 
     const handleSave = (e) => {
         e.preventDefault();
-
-        post(route("transaction.storeTmpItem"), {
+        console.log(data);
+        // return;
+        const options = {
             replace: true,
             onSuccess: () => {
                 reset();
@@ -28,14 +69,25 @@ export default function ModalListBarang({ items, modalRef, modalMode }) {
                 // );
                 modalRef.current.close();
             },
-        });
+        };
+
+        if (modalMode === "Buat") {
+            post(route("transaction.storeTmpItem"), options);
+        } else {
+            patch(route("transaction.editByIdTmpItem", [data.id]), options);
+        }
     };
 
-    const handleCancel = () => {
+    const handleCancel = (e) => {
         reset();
+        setSelectedItem(null);
+        console.log(data);
+        return;
     };
 
-    useEffect(() => {}, [data]);
+    useEffect(() => {
+        checkMode(selectedItem);
+    }, [modalMode, selectedItem]);
 
     return (
         <dialog id="modal_item" ref={modalRef} className="modal px-5">
@@ -49,10 +101,12 @@ export default function ModalListBarang({ items, modalRef, modalMode }) {
                         data={data}
                         setData={setData}
                         items={items}
+                        modalMode={modalMode}
+                        selectedItem={selectedItem}
                     />
 
                     <div className="flex flex-col items-end justify-center gap-3 sm:justify-end w-full my-5">
-                        <input hidden defaultValue={data.idBarang} />
+                        <input hidden defaultValue={data.idBarang} readOnly />
 
                         <div className="w-full sm:max-w-64 max-w-xs">
                             <div className="flex flex-row justify-between items-center">
@@ -98,6 +152,40 @@ export default function ModalListBarang({ items, modalRef, modalMode }) {
                                         defaultValue={data.nama}
                                         readOnly
                                     />
+                                </label>
+                            </div>
+
+                            {errors?.idBarang && (
+                                <div className="flex justify-end">
+                                    <div className="w-full max-w-40 sm:max-w-44">
+                                        <LabelErrorInput
+                                            message={
+                                                "Pilih barang terlebih dahulu"
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-full sm:max-w-64 max-w-xs">
+                            <div className="flex flex-row justify-between items-center">
+                                <p className="text-sm font-medium">
+                                    Harga <InputRequired />
+                                </p>
+
+                                <label className="form-control w-full max-w-40 sm:max-w-44">
+                                    <input
+                                        type="number"
+                                        placeholder="Harga"
+                                        className="input input-bordered input-sm bg-gray-200 w-full max-w-40 sm:max-w-44"
+                                        defaultValue={data.harga}
+                                        readOnly
+                                        hidden
+                                    />
+                                    <div className="input input-bordered input-sm bg-gray-200 w-full max-w-40 sm:max-w-44">
+                                        {formatCurrency(data.harga)}
+                                    </div>
                                 </label>
                             </div>
 
@@ -186,7 +274,7 @@ export default function ModalListBarang({ items, modalRef, modalMode }) {
                             onClick={handleSave}
                             disabled={processing}
                         >
-                            Simpan
+                            {modalMode === "Buat" ? "Simpan" : "Perbarui"}
                         </button>
 
                         <button

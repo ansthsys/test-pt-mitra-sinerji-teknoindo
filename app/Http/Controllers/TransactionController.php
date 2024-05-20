@@ -109,8 +109,35 @@ class TransactionController extends Controller
         return;
     }
 
-    public function editByIdTmpItem()
+    public function editByIdTmpItem(StoreBarangTempRequest $request, int $id)
     {
+        $data = $request->validated();
+        $itemsTemp = session('itemsTemp', []);
+
+        foreach ($itemsTemp as $key => $item) {
+            if ($item['id'] === $id) {
+                $barang = MBarang::find($data['idBarang']);
+
+                $diskonPct = $data['diskon'];
+                $diskonNilai = (float) $barang->harga * $diskonPct / 100;
+                $hargaDisc = (float) $barang->harga - $diskonNilai;
+                $total = (float) $hargaDisc * $data['jumlah'];
+
+                $itemsTemp[$key]['idBarang'] = $data['idBarang'];
+                $itemsTemp[$key]['kodeBarang'] = $barang->kode;
+                $itemsTemp[$key]['namaBarang'] = $barang->nama;
+                $itemsTemp[$key]['jumlah'] = $data['jumlah'];
+                $itemsTemp[$key]['harga'] = $barang->harga;
+                $itemsTemp[$key]['diskonPct'] = $diskonPct;
+                $itemsTemp[$key]['diskonNilai'] = $diskonNilai;
+                $itemsTemp[$key]['hargaDiskon'] = $hargaDisc;
+                $itemsTemp[$key]['total'] = $total;
+            }
+        }
+
+        // return dd($id, $data['idBarang'], $data['diskon'], $data['jumlah'], $itemsTemp);
+        session(['itemsTemp' => $itemsTemp]);
+        return;
     }
 
     public function deleteAllTmpItem(Request $request, Response $response)

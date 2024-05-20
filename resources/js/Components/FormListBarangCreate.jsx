@@ -14,6 +14,8 @@ const ModalCreateItem = forwardRef(function (props, ref) {
             modalRef={ref}
             items={props.items}
             modalMode={props.modalMode}
+            selectedItem={props.selectedItem}
+            setSelectedItem={props.setSelectedItem}
         />
     );
 });
@@ -26,15 +28,29 @@ export default function FormListBarangCreate({
     errors,
 }) {
     const [modalMode, setModalMode] = useState("Buat");
+    const [selectedItem, setSelectedItem] = useState(null);
     const modalRef = useRef();
+
+    const formatCurrency = (value) => {
+        if (!value) {
+            return "-";
+        } else {
+            return new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+            }).format(value);
+        }
+    };
 
     const openModalCreate = () => {
         setModalMode("Buat");
+        setSelectedItem(null);
         modalRef.current.showModal();
     };
 
-    const openModalEdit = () => {
+    const openModalEdit = (row) => {
         setModalMode("Ubah");
+        setSelectedItem(row);
         modalRef.current.showModal();
     };
 
@@ -122,28 +138,55 @@ export default function FormListBarangCreate({
                                                 <th>{index + 1}</th>
                                                 <td>{item.kodeBarang}</td>
                                                 <td>{item.namaBarang}</td>
-                                                <td>{item.jumlah}</td>
-                                                <td>{item.harga}</td>
-                                                <td>{item.diskonPct}</td>
-                                                <td>{item.diskonNilai}</td>
-                                                <td>{item.hargaDiskon}</td>
-                                                <td>{item.total}</td>
+                                                <td className="text-center">
+                                                    {item.jumlah}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(item.harga)}
+                                                </td>
+                                                <td className="text-center">
+                                                    {item.diskonPct}%
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(
+                                                        item.diskonNilai
+                                                    )}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(
+                                                        item.hargaDiskon
+                                                    )}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(item.total)}
+                                                </td>
                                                 <td>
                                                     <div className="flex gap-3 items-center justify-center">
-                                                        <button className="btn btn-xs btn-outline">
+                                                        <button
+                                                            className="btn btn-xs btn-outline"
+                                                            onClick={(e) => {
+                                                                openModalEdit(
+                                                                    item
+                                                                );
+                                                            }}
+                                                        >
                                                             <PencilSquareIcon className="size-4" />{" "}
-                                                            <span className="hidden md:inline">Ubah</span>
+                                                            <span className="hidden md:inline">
+                                                                Ubah
+                                                            </span>
                                                         </button>
                                                         <button
                                                             className="btn btn-xs btn-outline"
-                                                            onClick={() =>
+                                                            onClick={(e) =>
                                                                 handleDelete(
                                                                     item
                                                                 )
                                                             }
                                                         >
                                                             <ArchiveBoxXMarkIcon className="size-4" />{" "}
-                                                            <span className="hidden md:inline">Hapus</span>
+                                                            <span className="hidden md:inline">
+                                                                Hapus
+                                                            </span>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -177,6 +220,8 @@ export default function FormListBarangCreate({
                 items={items}
                 ref={modalRef}
                 modalMode={modalMode}
+                selectedItem={selectedItem}
+                setSelectedItem={setSelectedItem}
             />
         </>
     );
