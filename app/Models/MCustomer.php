@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MCustomer extends Model
 {
@@ -21,4 +22,9 @@ class MCustomer extends Model
         'nama',
         'telp',
     ];
+
+    public function tSales(): HasMany
+    {
+        return $this->hasMany(TSales::class);
+    }
 }

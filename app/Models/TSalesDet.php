@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TSalesDet extends Model
 {
@@ -26,4 +27,14 @@ class TSalesDet extends Model
         'harga_diskon',
         'total',
     ];
+
+    public function tSales(): BelongsTo
+    {
+        return $this->belongsTo(TSales::class);
+    }
+
+    public function mBarang(): BelongsTo
+    {
+        return $this->belongsTo(MBarang::class);
+    }
 }

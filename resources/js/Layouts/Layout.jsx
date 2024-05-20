@@ -10,7 +10,7 @@ export default function Layout({
         <div className="container lg:max-w-5xl min-h-screen mx-auto px-3 sm:px-5 lg:px-24 overflow-clip">
             <Header titlePage={titlePage}>{headComponent}</Header>
 
-            <main className="bg-slate-100 min-h-[86dvh] rounded-xl p-5 mb-5">
+            <main className="bg-slate-100 rounded-xl p-5 mb-5">
                 {children}
             </main>
         </div>

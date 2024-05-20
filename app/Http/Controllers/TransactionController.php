@@ -19,7 +19,36 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Transaction/Index');
+        $data = DB::table('t_sales')
+            ->join('m_customer', 't_sales.cust_id', '=', 'm_customer.id')
+            ->leftJoin('t_sales_det', 't_sales.id', '=', 't_sales_det.sales_id')
+            ->select(
+                't_sales.id',
+                't_sales.kode',
+                't_sales.tgl',
+                't_sales.subtotal',
+                't_sales.diskon',
+                't_sales.ongkir',
+                't_sales.total_bayar',
+                'm_customer.nama as nama_kustomer',
+                DB::raw('COUNT(t_sales_det.id) as jumlah_barang')
+            )
+            ->groupBy(
+                't_sales.id',
+                't_sales.kode',
+                't_sales.tgl',
+                't_sales.subtotal',
+                't_sales.diskon',
+                't_sales.ongkir',
+                't_sales.total_bayar',
+                'nama_kustomer'
+            )
+            ->orderBy('t_sales.id')
+            ->get();
+
+        return Inertia::render('Transaction/Index', [
+            'data' => fn () => $data,
+        ]);
     }
 
     public function create(Request $request)
@@ -51,10 +80,10 @@ class TransactionController extends Controller
             "cust_id" => $data['idKustomer'],
             "kode" => $data['noTransaksi'],
             "tgl" => $data['tglTransaksi'],
-            "subtotal" => $data['subtotal'],
-            "diskon" => $data['diskon'],
-            "ongkir" => $data['ongkir'],
-            "total_bayar" => $data['totalBayar'],
+            "subtotal" => (float) $data['subtotal'],
+            "diskon" => (float) $data['diskon'],
+            "ongkir" => (float) $data['ongkir'],
+            "total_bayar" => (float) $data['totalBayar'],
         ]);
 
         $itemsTemp = $data['items'];

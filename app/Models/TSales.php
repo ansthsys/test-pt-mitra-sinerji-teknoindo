@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TSales extends Model
 {
@@ -25,4 +27,14 @@ class TSales extends Model
         'ongkir',
         'total_bayar',
     ];
+
+    public function mCustomer(): BelongsTo
+    {
+        return $this->belongsTo(MCustomer::class);
+    }
+
+    public function tSalesDet(): HasMany
+    {
+        return $this->hasMany(TSalesDet::class);
+    }
 }
