@@ -10,6 +10,7 @@ use App\Http\Requests\StoreTransaksiRequest;
 use App\Models\MBarang;
 use App\Models\TSalesDet;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,9 +18,9 @@ use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = DB::table('t_sales')
+        $query = DB::table('t_sales')
             ->join('m_customer', 't_sales.cust_id', '=', 'm_customer.id')
             ->leftJoin('t_sales_det', 't_sales.id', '=', 't_sales_det.sales_id')
             ->select(
@@ -33,6 +34,10 @@ class TransactionController extends Controller
                 'm_customer.nama as nama_kustomer',
                 DB::raw('COUNT(t_sales_det.id) as jumlah_barang')
             )
+            ->when($request->search, function (Builder $query, $search) {
+                $query->whereRaw('LOWER(t_sales.kode) LIKE LOWER(?)', ["%$search%"])
+                    ->orWhereRaw('LOWER(m_customer.nama) LIKE LOWER(?)', ["%$search%"]);
+            })
             ->groupBy(
                 't_sales.id',
                 't_sales.kode',
@@ -46,8 +51,11 @@ class TransactionController extends Controller
             ->orderBy('t_sales.id')
             ->get();
 
+        // return dd($query, $query->toRawSql(), $query->get());
+
         return Inertia::render('Transaction/Index', [
-            'data' => fn () => $data,
+            'data' => fn () => $query,
+            'search' => $request->search ?? '',
         ]);
     }
 

@@ -3,8 +3,8 @@ import { Head } from "@inertiajs/react";
 import Layout from "@/Layouts/Layout";
 import HeaderIndex from "@/Components/HeaderIndex";
 
-export default function Index({ data }) {
-    console.log(data);
+export default function Index({ data, search }) {
+    console.log(data, search);
     const [grandTotal, setGrandTotal] = useState(0);
 
     const countGrandTotal = (arr) => {
@@ -62,41 +62,55 @@ export default function Index({ data }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((item, index) => {
-                                    return (
-                                        <tr className="hover" key={item.id}>
-                                            <td className="text-center">
-                                                {index + 1}
-                                            </td>
-                                            <td className="text-center text-nowrap">
-                                                {item.kode}
-                                            </td>
-                                            <td className="text-center text-nowrap">
-                                                {formatDate(item.tgl)}
-                                            </td>
-                                            <td className="text-left text-nowrap">
-                                                {item.nama_kustomer}
-                                            </td>
-                                            <td className="text-center">
-                                                {item.jumlah_barang}
-                                            </td>
-                                            <td className="text-right">
-                                                {formatCurrency(item.subtotal)}
-                                            </td>
-                                            <td className="text-right">
-                                                {formatCurrency(item.diskon)}
-                                            </td>
-                                            <td className="text-right">
-                                                {formatCurrency(item.ongkir)}
-                                            </td>
-                                            <th className="text-right">
-                                                {formatCurrency(
-                                                    item.total_bayar
-                                                )}
-                                            </th>
-                                        </tr>
-                                    );
-                                })}
+                                {data.length > 0 ? (
+                                    data.map((item, index) => {
+                                        return (
+                                            <tr className="hover" key={item.id}>
+                                                <td className="text-center">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="text-center text-nowrap">
+                                                    {item.kode}
+                                                </td>
+                                                <td className="text-center text-nowrap">
+                                                    {formatDate(item.tgl)}
+                                                </td>
+                                                <td className="text-left text-nowrap">
+                                                    {item.nama_kustomer}
+                                                </td>
+                                                <td className="text-center">
+                                                    {item.jumlah_barang}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(
+                                                        item.subtotal
+                                                    )}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(
+                                                        item.diskon
+                                                    )}
+                                                </td>
+                                                <td className="text-right">
+                                                    {formatCurrency(
+                                                        item.ongkir
+                                                    )}
+                                                </td>
+                                                <th className="text-right">
+                                                    {formatCurrency(
+                                                        item.total_bayar
+                                                    )}
+                                                </th>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan={9} className="text-center">
+                                            Tidak ada data
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                             <tfoot>
                                 <tr>
