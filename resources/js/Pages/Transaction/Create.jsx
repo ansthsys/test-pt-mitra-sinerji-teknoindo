@@ -7,19 +7,20 @@ import FormKustomerCreate from "@/Components/FormKustomerCreate";
 import FormListBarangCreate from "@/Components/FormListBarangCreate";
 
 export default function Create({ noTransaksi, customers, items, itemsTemp }) {
-    const { data, setData, post, processing, errors, transform } = useForm({
-        noTransaksi: noTransaksi,
-        tglTransaksi: "",
-        idKustomer: "",
-        kodeKustomer: "",
-        namaKustomer: "",
-        telpKustomer: "",
-        subtotal: "",
-        diskon: "",
-        ongkir: "",
-        totalBayar: "",
-        items: [],
-    });
+    const { data, setData, post, processing, errors, transform, reset } =
+        useForm({
+            noTransaksi: noTransaksi,
+            tglTransaksi: "",
+            idKustomer: "",
+            kodeKustomer: "",
+            namaKustomer: "",
+            telpKustomer: "",
+            subtotal: "",
+            diskon: "",
+            ongkir: "",
+            totalBayar: "",
+            items: [],
+        });
 
     const countSubtotal = (arr) => {
         if (arr.length < 1) return "";
@@ -58,7 +59,13 @@ export default function Create({ noTransaksi, customers, items, itemsTemp }) {
 
     const handleCancel = (e) => {
         e.preventDefault();
-        router.delete(route("transaction.deleteAllTmpItem"));
+        router.visit(route("transaction.index"), {
+            method: "get",
+            onSuccess: () => {
+                reset();
+                router.delete(route("transaction.deleteAllTmpItem"));
+            },
+        });
     };
 
     const hanldeSubmit = () => {

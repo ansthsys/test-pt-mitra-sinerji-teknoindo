@@ -4,15 +4,12 @@ import Layout from "@/Layouts/Layout";
 import HeaderIndex from "@/Components/HeaderIndex";
 
 export default function Index({ data, search }) {
-    console.log(data, search);
     const [grandTotal, setGrandTotal] = useState(0);
 
     const countGrandTotal = (arr) => {
         const total = arr?.reduce((acc, curr) => {
             return acc + parseFloat(curr.total_bayar);
         }, 0);
-
-        console.log(total);
 
         setGrandTotal(total);
     };

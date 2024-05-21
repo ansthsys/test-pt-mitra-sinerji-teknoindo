@@ -34,8 +34,6 @@ export default function ModalListBarang({
 
     const checkMode = (selectedItem) => {
         const createData = (prev) => {
-            console.log(prev, selectedItem);
-
             if (modalMode === "Ubah" && selectedItem) {
                 return {
                     id: selectedItem.id ?? "",
@@ -56,8 +54,6 @@ export default function ModalListBarang({
 
     const handleSave = (e) => {
         e.preventDefault();
-        console.log(data);
-        // return;
         const options = {
             replace: true,
             onSuccess: () => {
