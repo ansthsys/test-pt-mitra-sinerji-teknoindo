@@ -1,0 +1,38 @@
+name: Sync on DOM Cloud
+'on':
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: https://my.domcloud.co/api/githubdeploy
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          webhook_auth: ${{ secrets.WEBHOOK_AUTH }}
+          data: >-
+            {"source":"https://github.com/ansthsys/test-pt-mitra-sinerji-teknoindo.git","root":"public_html/public","features":["dns","ssl","ssl
+            always","php
+            latest","postgresql"],"nginx":{"fastcgi":"on","locations":[{"match":"/","try_files":"$uri
+            $uri/ /index.php$is_args$args"},{"match":"~
+            \\.[^\\/]+(?<!\\.php)$","try_files":"$uri
+            =404"}]},"commands":["composer install","cp .env.example .env","sed
+            -ri \"s/APP_ENV=local/APP_ENV=production/g\" .env","sed -ri
+            \"s/APP_DEBUG=true/APP_DEBUG=false/g\" .env","sed -ri
+            \"s/http:\\/\\//https:\\/\\//g\" .env","sed -i
+            \"s/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/g\" .env","sed -ri
+            \"s/(# )?DB_HOST=127.0.0.1/DB_HOST=localhost/g\" .env","sed -ri
+            \"s/(# )?DB_DATABASE=.*/DB_DATABASE=${DATABASE}/g\" .env","sed -ri
+            \"s/(# )?DB_USERNAME=.*/DB_USERNAME=${USERNAME}/g\" .env","sed -ri
+            \"s/(# )?DB_PASSWORD=.*/DB_PASSWORD=${PASSWORD}/g\" .env","sed -ri
+            \"s/APP_URL=.*/APP_URL=https:\\/\\/${DOMAIN}/g\" .env","php artisan
+            migrate:fresh --seed","php artisan key:generate","php artisan
+            storage:link","php artisan optimize","php artisan config:cache","php
+            artisan route:cache","php artisan view:cache","npm install","npm run
+            build","php artisan inertia:start-ssr","chmod g+r -R storage ||
+            true"]}
